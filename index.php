@@ -1,5 +1,9 @@
 <?php
 session_start();
+
+require_once __DIR__ . '/vendor/autoload.php';
+require_once __DIR__ . '/config.php';
+
 require_once "controller/ProductController.php";
 require_once "controller/CategoriesController.php";
 require_once "controller/UsersController.php";
@@ -11,7 +15,6 @@ require_once "controller/ProductVariantController.php";
 require_once "controller/CartController.php";
 require_once "router/Router.php";
 
-
 $router = new Router();
 $authController = new AuthController();
 $productController = new ProductController();
@@ -19,7 +22,6 @@ $colorController = new ColorController();
 $sizeController = new SizeController();
 $productVariantController = new ProductVariantController();
 $cartController = new CartController();
-
 
 $router->addMiddleware('logRequest');
 
@@ -33,17 +35,15 @@ $router->addRoute("/products/delete/{id}", [$productController, "delete"], ['isA
 $router->addRoute("/products-variants/create/{id}", [$productVariantController, "create"]);
 
 // Accessible to all logged-in users
-$router->addRoute("/login", [$authController, "login"]);
-$router->addRoute("/logout", [$authController, "logout"]);
-$router->addRoute("/register", [$authController, "register"]);
-
-// $router->addRoute("/login", [$authController, "login"]);
-// $router->addRoute("/logout", [$authController, "logout"]);
-// $router->addRoute("/register", [$authController, "register"]);
-// $router->addRoute("/forgot-password", [$authController, "forgotPassword"]);
-// $router->addRoute("/verify-otp", [$authController, "verifyOtp"]);
-// $router->addRoute("/reset-password", [$authController, "resetPassword"]);
-
+$router->addRoute('/forgot_password', [$authController, "showForgotPasswordForm"]);
+$router->addRoute('/send_otp', [$authController, "sendOtp"]);
+$router->addRoute('/verify_otp', [$authController, "showVerifyOtpForm"]);
+$router->addRoute('/verify_otp', [$authController, "verifyOtp"]);
+$router->addRoute('/reset_password', [$authController, "showResetPasswordForm"]);
+$router->addRoute('/reset_password', [$authController, "resetPassword"]);
+$router->addRoute('/login', [$authController, "login"]);
+$router->addRoute('/logout', [$authController, "logout"]);
+$router->addRoute('/register', [$authController, "register"]);
 // routes categories
 $categoryController = new CategoriesController();
 $router->addRoute("/categories", [$categoryController, "index"]);
@@ -61,7 +61,6 @@ $router->addRoute("/users/edit/{id}", [$userController, "edit"], ['isAdmin']);
 $router->addRoute("/users/delete/{id}", [$userController, "delete"], ['isAdmin']);
 
 // colors
-
 $router->addRoute("/colors", [$colorController, "index"], ['isAdmin']);
 $router->addRoute("/colors/create", [$colorController, "create"], ['isAdmin']);
 $router->addRoute("/colors/{id}", [$colorController, "show"], ['isAdmin']);
@@ -80,6 +79,12 @@ $router->addRoute("/carts", [$cartController, "index"]);
 $router->addRoute("/carts/delete/{id}", [$cartController, "delete"]);
 $router->addRoute('/carts/create', [$cartController, "create"]);
 $router->addRoute('/carts/update/{id}', [$cartController, "updateQuantity"]);
+$router->addRoute("/carts/clear", [$cartController, "clear"]);
 
+//checkout
+$router->addRoute('/checkout', [$cartController, "checkout"]);
+$router->addRoute('/orders', [$cartController, "orders"]);
+// $router->addRoute('/edit_order_status/{order_id}', [$cartController, "editOrderStatus"]);
+// $router->addRoute('/update_order_status', [$cartController, "updateOrderStatus"]);
 
 $router->dispatch();

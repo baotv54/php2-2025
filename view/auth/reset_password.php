@@ -1,12 +1,20 @@
-<h1>Reset Password</h1>
-<form method="POST">
-    <input type="hidden" name="email" value="<?= htmlspecialchars($_GET['email']) ?>">
-    <div class="mb-3">
-        <label for="password" class="form-label">New Password</label>
-        <input type="password" class="form-control" id="password" name="password" required>
-    </div>
-    <button type="submit" class="btn btn-primary">Reset Password</button>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reset Password</title>
+</head>
+<body>
+    <h2>Reset Password</h2>
+    <form action="/reset_password" method="POST">
+        <input type="hidden" name="email" value="<?= htmlspecialchars($email) ?>">
+        <label for="password">New Password:</label>
+        <input type="password" id="password" name="password" required>
+        <button type="submit">Reset Password</button>
+    </form>
     <?php if (isset($error)): ?>
-        <div class="alert alert-danger mt-3"><?= $error ?></div>
+        <p style="color: red;"><?= $error ?></p>
     <?php endif; ?>
-</form>
+</body>
+</html>

@@ -1,11 +1,20 @@
-<h1>Forgot Password</h1>
-<form method="POST">
-    <div class="mb-3">
-        <label for="email" class="form-label">Email</label>
-        <input type="email" class="form-control" id="email" name="email" required>
-    </div>
-    <button type="submit" class="btn btn-primary">Send OTP</button>
-    <?php if (isset($error)): ?>
-        <div class="alert alert-danger mt-3"><?= $error ?></div>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Forgot Password</title>
+</head>
+<body>
+    <h2>Forgot Password</h2>
+    <form action="/send_otp" method="GET">
+        <label for="email">Email:</label>
+        <input type="email" id="email" name="email" required>
+        <button type="submit">Send OTP</button>
+    </form>
+    <?php if (isset($_SESSION['error'])): ?>
+        <p style="color: red;"><?= $_SESSION['error'] ?></p>
+        <?php unset($_SESSION['error']); ?>
     <?php endif; ?>
-</form>
+</body>
+</html>

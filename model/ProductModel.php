@@ -11,13 +11,15 @@ class ProductModel
         $this->conn = $database->getConnection();
     }
 
+
     public function getAllProducts()
     {
-        $sql = "SELECT p.id, p.name, p.price, pv.colorId, c.name as colorName, pv.sizeId, s.name as sizeName, pv.image, pv.quantity, pv.sku
+        $sql = "
+        SELECT p.id, p.name, p.price, pv.image, pv.sku
         FROM products p
         LEFT JOIN productvarian pv ON p.id = pv.product_id
-        LEFT JOIN colors c ON pv.colorId = c.id
-        LEFT JOIN sizes s ON pv.sizeId = s.id";
+        GROUP BY p.id
+        ";
         $stmt = $this->conn->prepare($sql);
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);

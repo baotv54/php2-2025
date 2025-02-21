@@ -33,6 +33,12 @@
                         <li class="nav-item">
                             <a class="nav-link" href="/sizes">Sizes</a>
                         </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/orders">Orders</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/carts">Cart</a>
+                        </li>
                     <?php endif; ?>
                     <?php if (isset($_SESSION['user'])): ?>
                         <li class="nav-item">

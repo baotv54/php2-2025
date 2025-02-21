@@ -1,0 +1,18 @@
+{
+    "name": "bao/mvc",
+    "autoload": {
+        "psr-4": {
+            "Bao\\Mvc\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "bao",
+            "email": "baotrinhvan54@gmail.com"
+        }
+    ],
+    "require": {
+        "vlucas/phpdotenv": "*",
+        "phpmailer/phpmailer": "^6.9"
+    }
+}
