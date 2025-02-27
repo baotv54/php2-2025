@@ -31,9 +31,10 @@ if (!empty($product_variants)) {
 <div class="row">
     <div class="col-6">
         <!-- Display main product image -->
-        <img id="productImage" src="<?= !empty($product['image']) ? htmlspecialchars($product['image']) : 'placeholder.jpg' ?>" 
-            class="img-fluid" 
+        <img id="productImage" src="<?= !empty($product['image']) ? 'uploads/' . htmlspecialchars($product['image']) : 'uploads/placeholder.jpg' ?>"
+            class="img-fluid"
             alt="<?= !empty($product['name']) ? htmlspecialchars($product['name']) : 'No Name' ?>">
+
     </div>
 
     <div class="col-6">
@@ -70,7 +71,7 @@ if (!empty($product_variants)) {
             <button type="submit" id="addToCartBtn" class="btn btn-primary mt-3" disabled>Add to Cart</button>
         </form>
     </div>
-</div>
+</div>  
 
 <!-- Product Details -->
 <p><strong>Description:</strong> <?= nl2br(htmlspecialchars($product['description'])) ?></p>
@@ -82,66 +83,75 @@ if (!empty($product_variants)) {
 
 <!-- show sản phẩm đúng với attribute -->
 <script>
-const variantMap = <?= json_encode($variantMap, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT) ?>;
+    const variantMap = <?= json_encode($variantMap, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT) ?>;
 
-const colorSelect = document.getElementById('colorSelect');
-const sizeSelect = document.getElementById('sizeSelect');
-const quantityInput = document.getElementById('quantityInput');
-const productImage = document.getElementById('productImage');
-const productPrice = document.getElementById('productPrice');
-const productSku = document.getElementById('productSku');
-const productQuantity = document.getElementById('productQuantity');
-const addToCartBtn = document.getElementById('addToCartBtn');
-const selectedSku = document.getElementById('selectedSku');
-const selectedPrice = document.getElementById('selectedPrice');
+    const colorSelect = document.getElementById('colorSelect');
+    const sizeSelect = document.getElementById('sizeSelect');
+    const quantityInput = document.getElementById('quantityInput');
+    const productImage = document.getElementById('productImage');
+    const productPrice = document.getElementById('productPrice');
+    const productSku = document.getElementById('productSku');
+    const productQuantity = document.getElementById('productQuantity');
+    const addToCartBtn = document.getElementById('addToCartBtn');
+    const selectedSku = document.getElementById('selectedSku');
+    const selectedPrice = document.getElementById('selectedPrice');
 
-colorSelect.addEventListener('change', function() {
-    sizeSelect.innerHTML = '<option value="">-- Choose Size --</option>';
-    sizeSelect.disabled = true;
-    quantityInput.disabled = true;
-    addToCartBtn.disabled = true;
-    selectedSku.value = "";
-    productSku.textContent = "N/A";
-    productQuantity.textContent = "N/A";
+    colorSelect.addEventListener('change', function() {
+sizeSelect.innerHTML = '<option value="">-- Choose Size --</option>';
+        sizeSelect.disabled = true;
+        quantityInput.disabled = true;
+        addToCartBtn.disabled = true;
+        selectedSku.value = "";
+        productSku.textContent = "N/A";
+        productQuantity.textContent = "N/A";
 
-    const selectedColor = this.value;
-    if (variantMap[selectedColor]) {
-        sizeSelect.disabled = false;
-        Object.keys(variantMap[selectedColor]).forEach(size => {
-            sizeSelect.innerHTML += `<option value="${size}">${size}</option>`;
-        });
-    }
-});
+        const selectedColor = this.value;
+        if (variantMap[selectedColor]) {
+            sizeSelect.disabled = false;
+            Object.keys(variantMap[selectedColor]).forEach(size => {
+                sizeSelect.innerHTML += `<option value="${size}">${size}</option>`;
+            });
+        }
+    });
 
-sizeSelect.addEventListener('change', function() {
-    addToCartBtn.disabled = true;
-    selectedSku.value = "";
-    productSku.textContent = "N/A";
-    productQuantity.textContent = "N/A";
-    quantityInput.disabled = true;
+    sizeSelect.addEventListener('change', function() {
+        addToCartBtn.disabled = true;
+        selectedSku.value = "";
+        productSku.textContent = "N/A";
+        productQuantity.textContent = "N/A";
+        quantityInput.disabled = true;
 
-    const selectedColor = colorSelect.value;
-    const selectedSize = this.value;
-    
-    if (variantMap[selectedColor] && variantMap[selectedColor][selectedSize]) {
-        const variant = variantMap[selectedColor][selectedSize];
-        productImage.src = variant.image ? variant.image : 'placeholder.jpg';
-        productPrice.textContent = `${parseFloat(variant.price).toFixed(2)}`;
-        productSku.textContent = variant.sku;
-        selectedSku.value = variant.sku;
-        productQuantity.textContent = variant.quantity;
-        quantityInput.disabled = false;
-        addToCartBtn.disabled = false;
-        selectedPrice.value = variant.price;
-    }
-});
+        const selectedColor = colorSelect.value;
+        const selectedSize = this.value;
 
-quantityInput.addEventListener('change', function() {
-    const quantity = parseInt(this.value);
-    const availableQuantity = parseInt(productQuantity.textContent);
-    if (quantity > availableQuantity) {
-        this.value = availableQuantity;
-        alert(`Only ${availableQuantity} available in stock.`);
-    }
-});
+        if (variantMap[selectedColor] && variantMap[selectedColor][selectedSize]) {
+            const variant = variantMap[selectedColor][selectedSize];
+            if (variant.image) {
+                if (variant.image.startsWith("http")) {
+                    productImage.src = variant.image; // URL ảnh bên ngoài
+                } else {
+                    productImage.src = `/` + variant.image; // Đường dẫn nội bộ
+                }
+            } else {
+                productImage.src = '/uploads/placeholder.jpg'; // Ảnh mặc định
+            }
+            productPrice.textContent = `${parseFloat(variant.price).toFixed(2)}`;
+            productSku.textContent = variant.sku;
+            selectedSku.value = variant.sku;
+            productQuantity.textContent = variant.quantity;
+            quantityInput.disabled = false;
+            addToCartBtn.disabled = false;
+            selectedPrice.value = variant.price;
+        }
+    });
+
+
+    quantityInput.addEventListener('change', function() {
+        const quantity = parseInt(this.value);
+        const availableQuantity = parseInt(productQuantity.textContent);
+        if (quantity > availableQuantity) {
+            this.value = availableQuantity;
+            alert(`Only ${availableQuantity} available in stock.`);
+        }
+    });
 </script>

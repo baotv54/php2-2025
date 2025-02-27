@@ -1,79 +1,146 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="vi">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Dashboard</title>
+    <title><?= $title ?? "Bảng Quản Trị" ?></title>
+    <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            display: flex;
+            min-height: 100vh;
+            overflow: auto;
+        }
+
+        .sidebar {
+            min-width: 250px;
+            max-width: 250px;
+            background-color: #343a40;
+            color: white;
+            display: flex;
+            flex-direction: column;
+            padding-top: 20px;
+        }
+
+        .sidebar a {
+            color: white;
+            text-decoration: none;
+            padding: 10px 20px;
+            display: block;
+        }
+
+        .sidebar a:hover {
+            background-color: #495057;
+        }
+
+        .content {
+            flex-grow: 1;
+            padding: 20px;
+            overflow-y: auto;
+        }
+    </style>
 </head>
 
 <body>
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-        <div class="container-fluid">
-            <a class="navbar-brand" href="/">Dashboard</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto">
-                    <?php if (isset($_SESSION['user']) && $_SESSION['user']['role'] === 'admin'): ?>
-                        <li class="nav-item">
-                            <a class="nav-link" href="/products">Products</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="/categories">Categories</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="/users">Users</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="/colors">Colors</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="/sizes">Sizes</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="/orders">Orders</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="/carts">Cart</a>
-                        </li>
-                    <?php endif; ?>
-                    <?php if (isset($_SESSION['user'])): ?>
-                        <li class="nav-item">
-                            <a class="nav-link" href="/logout">Logout</a>
-                        </li>
-                    <?php else: ?>
-                        <li class="nav-item">
-                            <a class="nav-link" href="/login">Login</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="/register">Register</a>
-                        </li>
-                    <?php endif; ?>
-                </ul>
-            </div>
+    <?php if (isset($_SESSION['user']) && $_SESSION['user']['role'] === 'admin'): ?>
+        <!-- Sidebar dành cho Quản Trị -->
+        <div class="sidebar">
+            <h4 class="text-center">Quản Trị</h4>
+            <hr>
+            <a href="/">Trang Chủ</a>
+            <a href="/products">Quản Lý Sản Phẩm</a>
+            <a href="/categories">Quản Lý Danh Mục</a>
+            <a href="/orders">Quản Lý Đơn Hàng</a>
+            <a href="/users">Quản Lý Người Dùng</a>
+            <a href="/colors">Quản Lý Màu Sắc</a>
+            <a href="/sizes">Quản Lý Kích Thước</a>
+            <a href="/products-variants/create/1">Thêm Biến Thể</a>
+            <a href="/banners">Quản lý banner</a>
+            <a href="/discounts">Quản Lý Mã Giảm Giá</a>
+
+
+            <!-- <a href="/coupons" >free ship</a> -->
+            <!-- <a href="/manage_addresses" > Địa chỉ người dùng </a> -->
+
+            <hr>
+            <a href="/logout" class="text-danger">Đăng Xuất</a>
         </div>
-    </nav>
-    <div class="container mt-5">
-        <?php if (isset($_SESSION['success'])): ?>
-            <div class="alert alert-success">
-                <?= $_SESSION['success'] ?>
+
+        <div class="content">
+            <?php if (isset($_SESSION['success'])): ?>
+                <div class="alert alert-info" role="alert">
+                    <?= htmlspecialchars($_SESSION['success']); ?>
+                </div>
                 <?php unset($_SESSION['success']); ?>
-            </div>
-        <?php endif; ?>
-        <?php if (isset($_SESSION['error'])): ?>
-            <div class="alert alert-danger">
-                <?= $_SESSION['error'] ?>
-                <?php unset($_SESSION['error']); ?>
-            </div>
-        <?php endif; ?>
-        <?= $content ?>
-    </div>
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.3.0/dist/js/bootstrap.min.js"></script>
+            <?php endif; ?>
+
+
+            <?= $content ?>
+        </div>
+    <?php else: ?>
+        <!-- Giao diện dành cho Người Dùng hoặc Khách -->
+        <div class="container mt-4">
+            <header>
+                <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm rounded">
+                    <div class="container">
+                        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                            <span class="navbar-toggler-icon"></span>
+                        </button>
+                        <div class="collapse navbar-collapse" id="navbarNav">
+                            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark fw-semibold" href="/">Trang Chủ</a>
+                                </li>
+                                <!-- <li class="nav-item">
+                                    <a class="nav-link text-dark fw-semibold" href="/categories">Danh Mục</a>
+                                </li> -->
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark fw-semibold" href="/carts">Giỏ Hàng</a>
+                                </li>
+                                <!-- <li class="nav-item">
+                                    <a class="nav-link text-dark fw-semibold" href="/profile">Tôi</a>
+                                </li> -->
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark fw-semibold" href="/track_order">Tra Cứu Mã Vận Đơn</a>
+                                </li>
+                            </ul>
+                            <div class="d-flex">
+                                <?php if (isset($_SESSION['user'])): ?>
+                                    <!-- <span class="navbar-text me-3 text-dark fw-semibold">Chào, <?= htmlspecialchars($_SESSION['user']['name']); ?></span> -->
+                                    <a href="/logout" class="btn btn-outline-danger btn-sm">Đăng Xuất</a>
+                                <?php else: ?>
+                                    <a href="/login" class="btn btn-primary btn-sm me-2">Đăng Nhập</a>
+                                    <a href="/register" class="btn btn-success btn-sm">Đăng Ký</a>
+                                <?php endif; ?>
+                            </div>
+                        </div>
+                    </div>
+                </nav>
+            </header>
+
+            <main class="mt-4">
+                <?php if (isset($_SESSION['success'])): ?>
+                    <div class="alert alert-info alert-dismissible fade show" role="alert">
+                        <?= htmlspecialchars($_SESSION['success']); ?>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                    <?php unset($_SESSION['success']); ?>
+                <?php endif; ?>
+
+                <!-- Nội dung chính -->
+                <div class="content shadow-sm rounded bg-light p-4">
+                    <?= $content ?>
+                </div>
+            </main>
+        </div>
+
+
+        <!-- Bootstrap JS Bundle -->
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <?php endif; ?>
+
 </body>
 
 </html>

@@ -32,13 +32,19 @@ class ProductVariantModel
     public function getVariantByProductId($productId)
     {
         $query = "SELECT *, c.name as colorName, s.name as sizeName
-         FROM productvarian p INNER JOIN colors c on p.colorId = c.id
-            INNER JOIN sizes s on p.sizeId = s.id
-         WHERE p.product_id = :productId ";
+         FROM productvarian p 
+         INNER JOIN colors c on p.colorId = c.id
+         INNER JOIN sizes s on p.sizeId = s.id
+         WHERE p.product_id = :productId";
         $stmt = $this->conn->prepare($query);
         $stmt->bindParam(':productId', $productId);
         $stmt->execute();
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        // echo "<pre>";
+        // print_r($result);
+        // echo "</pre>"; // Debug dữ liệu
+        return $result;
     }
 
 
@@ -56,20 +62,22 @@ class ProductVariantModel
         return $stmt->execute();
     }
 
-    // public function updateProduct($id, $name, $description, $price) {
-    //     $query = "UPDATE products SET name = :name, description = :description, price = :price WHERE id = :id";
-    //     $stmt = $this->conn->prepare($query);
-    //     $stmt->bindParam(':id', $id);
-    //     $stmt->bindParam(':name', $name);
-    //     $stmt->bindParam(':description', $description);
-    //     $stmt->bindParam(':price', $price);
-    //     return $stmt->execute();
-    // }
+    public function updateVariant($id, $product_id, $colorId, $sizeId, $image, $quantity, $price, $sku)
+    {
+        $query = "UPDATE productvarian 
+                  SET product_id = :product_id, colorId = :colorId, sizeId = :sizeId, image = :image, 
+                      quantity = :quantity, price = :price, sku = :sku 
+                  WHERE id = :id";
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(':id', $id);
+        $stmt->bindParam(':product_id', $product_id);
+        $stmt->bindParam(':colorId', $colorId);
+        $stmt->bindParam(':sizeId', $sizeId);
+        $stmt->bindParam(':image', $image);
+        $stmt->bindParam(':quantity', $quantity);
+        $stmt->bindParam(':price', $price);
+        $stmt->bindParam(':sku', $sku);
 
-    // public function deleteProduct($id) {
-    //     $query = "DELETE FROM products WHERE id = :id";
-    //     $stmt = $this->conn->prepare($query);
-    //     $stmt->bindParam(':id', $id);
-    //     return $stmt->execute();
-    // }
+        return $stmt->execute();
+    }
 }

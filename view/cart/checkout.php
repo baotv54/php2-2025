@@ -39,7 +39,7 @@
                 <td><?= number_format($cart['price'], 2) ?></td>
                 <td><?= number_format($cart['price'] * $cart['quantity'], 2) ?></td>
                 <?php
-                    $total += $cart['price'] * $cart['quantity'];
+                $total += $cart['price'] * $cart['quantity'];
                 ?>
             </tr>
         <?php endforeach; ?>
@@ -58,10 +58,20 @@
         <label for="email" class="form-label">Email</label>
         <input type="email" name="email" id="email" class="form-control" required>
     </div>
+    <!-- Hiển thị địa chỉ -->
+
     <div class="mb-3">
-        <label for="address" class="form-label">Address</label>
-        <input type="text" name="address" id="address" class="form-control" required>
+        <label for="address" class="form-label">Địa chỉ giao hàng</label>
+        <select name="address_id" id="address" class="form-control">
+            <?php foreach ($addresses as $address): ?>
+                <option value="<?= $address['id'] ?>" <?= $address['is_default'] ? 'selected' : '' ?>>
+                    <?= htmlspecialchars($address['address']) ?>
+                </option>
+            <?php endforeach; ?>
+        </select>
+        <a href="manage_addresses" class="btn btn-link">Quản lý địa chỉ</a>
     </div>
+    
     <div class="mb-3">
         <label for="note" class="form-label">Note</label>
         <textarea name="note" id="note" class="form-control" required></textarea>

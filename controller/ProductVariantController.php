@@ -63,6 +63,10 @@ class ProductVariantController
                 $target_dir = "uploads/";
                 $target_file = $target_dir . basename($_FILES["image"]["name"]);
                 move_uploaded_file($_FILES["image"]["tmp_name"], $target_file);
+                $originalName = $_FILES['image']['name'];
+                $safeFileName = preg_replace('/[^a-zA-Z0-9-_\.]/', '_', $originalName); // Xóa ký tự đặc biệt
+                $uploadPath = "uploads/" . $safeFileName;
+                move_uploaded_file($_FILES['image']['tmp_name'], $uploadPath);
             }
 
             $this->productVariantModel->createVariants($product_id, $colorId, $sizeId, $target_file, $quantity, $price, $sku);
@@ -79,20 +83,43 @@ class ProductVariantController
         }
     }
 
-    public function edit($id)
-    {
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $name = $_POST['name'];
-            $description = $_POST['description'];
-            $price = $_POST['price'];
 
-            $this->productModel->updateProduct($id, $name, $description, $price);
+    public function editVariant($id)
+    {
+        $variant = $this->productVariantModel->getVariantByProductId($id); // Lấy thông tin biến thể
+        $products = $this->productModel->getAllProducts();
+        $sizes = $this->sizeModel->getAll();
+        $colors = $this->colorModel->getAll();
+
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $product_id = $_POST['product_id'];
+            $colorId = $_POST['color_id'];
+            $sizeId = $_POST['size_id'];
+            $quantity = $_POST['quantity'];
+            $price = $_POST['price'];
+            $sku = $_POST['sku'];
+
+            // Xử lý upload ảnh nếu có
+            if (!empty($_FILES['image']['name'])) {
+                $target_dir = "uploads/";
+                $safeFileName = preg_replace('/[^a-zA-Z0-9-_\.]/', '_', $_FILES['image']['name']);
+                $uploadPath = $target_dir . $safeFileName;
+                move_uploaded_file($_FILES['image']['tmp_name'], $uploadPath);
+                $image = $uploadPath;
+            } else {
+                $image = $variant['image']; // Giữ nguyên ảnh cũ
+            }
+
+            $this->productVariantModel->updateVariant($id, $product_id, $colorId, $sizeId, $image, $quantity, $price, $sku);
+
+            $_SESSION['message'] = "Product variant updated successfully!";
             header("Location: /products");
-        } else {
-            $product = $this->productModel->getProductById($id);
-            renderView("view/product_edit.php", compact('product'), "Edit Product");
+            exit();
         }
+
+        renderView("view/productsvariant/edit.php", compact("variant", "products", "sizes", "colors"), "Edit Product Variant");
     }
+
 
     public function delete($id)
     {

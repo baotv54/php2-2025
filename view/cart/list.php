@@ -48,6 +48,7 @@
                         </td>
                     </tr>
                 <?php endforeach; ?>
+                
             </tbody>
         </table>
         <div class="d-flex justify-content-between align-items-center border-top pt-3">

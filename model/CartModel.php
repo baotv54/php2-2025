@@ -95,6 +95,7 @@ class CartModel
         return $stmt->execute();
     }
 
+
     public function clearCart($user_id, $cart_session)
     {
         $condition = !empty($user_id) ? "user_id = :user_id" : "cart_session = :cart_session";
@@ -108,4 +109,24 @@ class CartModel
         }
         return $stmt->execute();
     }
+    public function getTotalPrice($user_id, $cart_session)
+    {
+        if ($user_id) {
+            $stmt = $this->conn->prepare("SELECT SUM(price * quantity) AS total_price FROM cart WHERE user_id = ?");
+            $stmt->execute([$user_id]);
+        } else {
+            $stmt = $this->conn->prepare("SELECT SUM(price * quantity) AS total_price FROM cart WHERE cart_session = ?");
+            $stmt->execute([$cart_session]);
+        }
+        $result = $stmt->fetch();
+        return $result['total_price'] ?? 0;
+    }
+    public function getStockQuantity($productId) {
+        $query = "SELECT quantity FROM productvarian WHERE id = :productId";
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(':productId', $productId);
+        $stmt->execute();
+        return $stmt->fetchColumn(); // Lấy giá trị số lượng tồn kho
+    }
+    
 }
